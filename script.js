@@ -97,16 +97,22 @@ function simpanSebagaiJSON() {
 }
 
 function simpanSebagaiPDF() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
+  const elemen = document.body;
+  html2canvas(elemen).then(canvas => {
+    const imgData = canvas.toDataURL('image/png');
+    const pdf = new jspdf.jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
 
-  doc.html(document.body, {
-    callback: function (doc) {
-      doc.save("agenda_hut_igt_2025.pdf");
-    },
-    x: 10,
-    y: 10,
-    width: 180
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
+
+    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    pdf.save("agenda_hut_igt_2025.pdf");
   });
 }
 
@@ -125,12 +131,11 @@ function resetSemuaData() {
   }
 }
 
-// Jalankan saat pertama kali
 document.addEventListener("DOMContentLoaded", () => {
   renderNavigasi();
   renderDaftar();
 
-  // Tambah tombol reset ke pojok kanan bawah
+  // Tambah tombol reset di pojok kanan bawah
   const resetBtn = document.createElement("button");
   resetBtn.textContent = "Reset Semua Data";
   resetBtn.style.position = "fixed";
