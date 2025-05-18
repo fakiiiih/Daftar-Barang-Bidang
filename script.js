@@ -9,11 +9,27 @@ async function simpanData() {
   if (window.db) {
     const docRef = doc(window.db, "daftarBarang", "dataSemua");
     try {
-      await setDoc(docRef, { semuaData });  // << ini fix-nya!
+      await setDoc(docRef, { semuaData });
       console.log("✅ Data berhasil disimpan ke Firestore.");
     } catch (error) {
       console.error("❌ Gagal simpan ke Firestore:", error);
     }
+  }
+}
+
+async function loadDataDariFirestore() {
+  if (!window.db) return;
+  try {
+    const docRef = doc(window.db, "daftarBarang", "dataSemua");
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      semuaData = docSnap.data().semuaData || semuaData;
+      console.log("🔁 Data disinkron dari Firestore.");
+      renderNavigasi();
+      renderDaftar();
+    }
+  } catch (error) {
+    console.error("⚠️ Gagal sync dari Firestore:", error);
   }
 }
 
@@ -43,11 +59,11 @@ function renderDaftar() {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = item.cek;
-    
+
     const span = document.createElement("span");
     span.textContent = item.nama;
     if (item.cek) span.classList.add("checked");
-    
+
     checkbox.onchange = () => {
       item.cek = checkbox.checked;
       span.classList.toggle("checked", item.cek);
@@ -71,13 +87,13 @@ function renderDaftar() {
 
 function tambahBarang() {
   const nama = document.getElementById("inputBarang").value.trim();
-  if (!nama) return; // validasi biar gak masukin string kosong
+  if (!nama) return;
 
   if (!semuaData[halamanAktif]) {
     semuaData[halamanAktif] = { judul: halamanAktif, daftar: [] };
   }
-  
-  semuaData[halamanAktif].daftar.push({ nama, cek: false }); // ini yang kurang
+
+  semuaData[halamanAktif].daftar.push({ nama, cek: false });
   document.getElementById("inputBarang").value = "";
   document.getElementById("inputBarang").focus();
   simpanData();
@@ -94,14 +110,11 @@ function gantiJudul() {
 
 function buatHalamanBaru() {
   let nama = prompt("Masukkan nama halaman baru:");
-
-  // Validasi nama halaman
   if (!nama || semuaData[nama] || /[^a-zA-Z0-9_ -]/.test(nama)) {
     alert("❌ Nama halaman tidak valid atau sudah ada.");
     return;
   }
 
-  // Tambahkan halaman baru
   semuaData[nama] = { judul: nama, daftar: [] };
   halamanAktif = nama;
   renderNavigasi();
@@ -150,11 +163,9 @@ function simpanSebagaiPDF() {
     });
 
     const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const imgWidth = pageWidth;
-    const imgHeight = canvas.height * imgWidth / canvas.width;
+    const imgHeight = canvas.height * pageWidth / canvas.width;
 
-    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight);
     pdf.save("agenda_hut_igt_2025.pdf");
   });
 }
@@ -181,7 +192,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         semuaData = docSnap.data().semuaData || semuaData;
-        simpanData(); // ← supaya localStorage ikut update
+        simpanData();
         console.log("📥 Data diambil dari Firestore.");
       } else {
         console.log("📭 Tidak ada data Firestore, pakai localStorage.");
@@ -194,7 +205,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderNavigasi();
   renderDaftar();
 
-  // Tambah tombol reset di pojok kanan bawah
   const resetBtn = document.createElement("button");
   resetBtn.textContent = "Reset Semua Data";
   resetBtn.style.position = "fixed";
@@ -209,3 +219,14 @@ document.addEventListener("DOMContentLoaded", async () => {
   resetBtn.onclick = resetSemuaData;
   document.body.appendChild(resetBtn);
 });
+
+// 🔁 Auto-sync
+setInterval(() => {
+  console.log("📡 Mengambil data dari Firestore...");
+  loadDataDariFirestore();
+}, 10000);
+
+setInterval(() => {
+  console.log("⏳ Menyimpan data otomatis ke Firestore...");
+  simpanData();
+}, 10000);
