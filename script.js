@@ -141,7 +141,22 @@ function resetSemuaData() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
+  if (window.db) {
+    try {
+      const docRef = doc(window.db, "daftarBarang", "dataSemua");
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        semuaData = docSnap.data();
+        console.log("📥 Data diambil dari Firestore.");
+      } else {
+        console.log("📭 Tidak ada data Firestore, pakai localStorage.");
+      }
+    } catch (error) {
+      console.error("⚠️ Gagal ambil data dari Firestore:", error);
+    }
+  }
+
   renderNavigasi();
   renderDaftar();
 
