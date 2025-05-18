@@ -3,8 +3,18 @@ let semuaData = JSON.parse(localStorage.getItem("semuaData")) || {
   default: { judul: "Bidang Acara", daftar: [] },
 };
 
-function simpanData() {
+async function simpanData() {
   localStorage.setItem("semuaData", JSON.stringify(semuaData));
+
+  if (window.db) {
+    const docRef = doc(window.db, "daftarBarang", "dataSemua");
+    try {
+      await setDoc(docRef, semuaData);
+      console.log("✅ Data berhasil disimpan ke Firestore.");
+    } catch (error) {
+      console.error("❌ Gagal simpan ke Firestore:", error);
+    }
+  }
 }
 
 function renderDaftar() {
