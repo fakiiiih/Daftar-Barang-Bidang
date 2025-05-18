@@ -199,3 +199,14 @@ li button:hover {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
 }
+
+/* 🪪 COPYRIGHT */
+.copyright-footer {
+  position: fixed;
+  bottom: 5px;
+  right: 10px;
+  font-size: 14px;
+  color: #999;
+  font-style: italic;
+  z-index: 10;
+}
