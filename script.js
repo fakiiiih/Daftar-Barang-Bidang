@@ -70,9 +70,10 @@ function renderDaftar() {
 
 function tambahBarang() {
   const nama = document.getElementById("inputBarang").value.trim();
-  if (!nama) return;
-  semuaData[halamanAktif].daftar.push({ nama: nama, cek: false });
-  document.getElementById("inputBarang").value = "";
+  if (!semuaData[halamanAktif]) {
+    semuaData[halamanAktif] = { judul: halamanAktif, daftar: [] };
+  }
+  document.getElementById("inputBarang").focus();
   simpanData();
   renderDaftar();
 }
@@ -98,6 +99,7 @@ function buatHalamanBaru() {
   semuaData[nama] = { judul: nama, daftar: [] };
   halamanAktif = nama;
   renderNavigasi();
+  document.getElementById("judulInput").value = semuaData[hal].judul;
   simpanData();
   renderDaftar();
   document.getElementById("judulHalaman").textContent = nama;
@@ -173,6 +175,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         semuaData = docSnap.data().semuaData || semuaData;
+        simpanData(); // ← supaya localStorage ikut update
         console.log("📥 Data diambil dari Firestore.");
       } else {
         console.log("📭 Tidak ada data Firestore, pakai localStorage.");
