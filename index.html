@@ -65,36 +65,15 @@
     <button onclick="resetSemuaData()">Reset Semua Data</button>
   </div>
 
-  <!-- Firebase Setup (load sekali) -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import {
-      getFirestore,
-      doc,
-      setDoc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyAurY86EouYcDbI186c6AqMukWbkEbvP0E",
-      authDomain: "list-barang-semua-bidang.firebaseapp.com",
-      projectId: "list-barang-semua-bidang",
-      storageBucket: "list-barang-semua-bidang.appspot.com",
-      messagingSenderId: "915737150263",
-      appId: "1:915737150263:web:950d3a7de203a6389090b2",
-      measurementId: "G-F8X8JC8WKG"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    window.db = db;
-    window.doc = doc;
-    window.setDoc = setDoc;
-    window.getDoc = getDoc;
+  <!-- Service Worker registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(console.error);
+    }
   </script>
 
   <!-- Script utama -->
-  <script src="script.js"></script>
+  <script type="module" src="script.js" defer></script>
 
   <!-- Footer -->
   <div class="copyright-footer">
