@@ -9,7 +9,7 @@ async function simpanData() {
   if (window.db) {
     const docRef = doc(window.db, "daftarBarang", "dataSemua");
     try {
-      await setDoc(docRef, semuaData);
+      await setDoc(docRef, { semuaData });
       console.log("✅ Data berhasil disimpan ke Firestore.");
     } catch (error) {
       console.error("❌ Gagal simpan ke Firestore:", error);
