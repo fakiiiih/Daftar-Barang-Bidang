@@ -8,6 +8,8 @@ body {
   margin: 0;
   color: #333;
   transition: background 0.3s, color 0.3s;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 body.dark {
@@ -43,10 +45,11 @@ button {
   margin-top: 40px;
   margin-bottom: 30px;
   text-align: center;
+  flex-wrap: wrap;
 }
 
 .navbar button {
-  margin-right: 10px;
+  margin: 5px;
   padding: 10px 15px;
   background-color: #333;
   color: white;
@@ -64,12 +67,15 @@ button {
 
 .header h1 {
   margin-bottom: 10px;
+  font-size: 28px;
 }
 
 .header input[type="text"] {
   padding: 8px;
   font-size: 16px;
   width: 60%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 /* ================= */
@@ -83,6 +89,8 @@ button {
 .barang {
   padding: 10px;
   width: 300px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
 }
 
 .form-container button:nth-of-type(1) {
@@ -159,6 +167,9 @@ li span {
 li button {
   background: crimson;
   color: white;
+  padding: 6px 10px;
+  margin-left: 6px;
+  border-radius: 5px;
 }
 
 li button:hover {
@@ -209,16 +220,44 @@ li button:hover {
 /* =================== */
 /* 📱 RESPONSIVE */
 /* =================== */
-@media screen and (max-width: 600px) {
-  .form-container,
-  .search-container,
-  .header input[type="text"],
-  .search-container input {
-    width: 90%;
+@media screen and (max-width: 768px) {
+  .form-container .barang,
+  .search-container input,
+  .header input[type="text"] {
+    width: 95%;
+    font-size: 14px;
   }
 
-  ul {
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  .form-container button,
+  .navbar button {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .header h1 {
+    font-size: 22px;
+  }
+
+  li span {
+    font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .header h1 {
+    font-size: 18px;
+  }
+
+  .reset-container {
+    bottom: 10px;
+    right: 10px;
+  }
+
+  .toast {
+    bottom: 80px;
+    right: 10px;
+    font-size: 14px;
+    padding: 8px 12px;
   }
 }
 
