@@ -6,11 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aplikasi Daftar Barang</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
   <!-- Sudut kanan atas -->
   <div class="header-left">
-    <span class="title-corner">IKMADIKSI | HUT &amp; IGT 2025</span>
+    <span class="title-corner">IKMADIKSI | HUT & IGT 2025</span>
   </div>
 
   <!-- Navigasi dan Dark Mode Toggle -->
@@ -20,25 +22,15 @@
     <span id="navButtons"></span>
   </div>
 
-  <!-- Judul dan input ganti judul halaman -->
+  <!-- Judul dan input -->
   <div class="header">
     <h1 id="judulHalaman">Bidang Acara</h1>
-    <input
-      type="text"
-      id="judulInput"
-      placeholder="Ganti nama bidang..."
-      oninput="gantiJudul()"
-    />
+    <input type="text" id="judulInput" placeholder="Ganti nama bidang..." oninput="gantiJudul()" />
   </div>
 
-  <!-- Form input barang & export -->
+  <!-- Form input barang -->
   <div class="form-container">
-    <input
-      type="text"
-      id="inputBarang"
-      class="barang"
-      placeholder="Masukkan nama barang"
-    />
+    <input type="text" id="inputBarang" class="barang" placeholder="Masukkan nama barang" />
     <button onclick="tambahBarang()">Tambah</button>
     <button onclick="simpanSebagaiJSON()">Simpan sebagai JSON</button>
     <button onclick="simpanSebagaiPDF()">Simpan sebagai PDF</button>
@@ -46,12 +38,7 @@
 
   <!-- Pencarian barang -->
   <div class="search-container">
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Cari barang..."
-      oninput="cariBarang()"
-    />
+    <input type="text" id="searchInput" placeholder="Cari barang..." oninput="cariBarang()" />
   </div>
 
   <!-- Statistik -->
@@ -65,15 +52,32 @@
     <button onclick="resetSemuaData()">Reset Semua Data</button>
   </div>
 
-  <!-- Service Worker registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(console.error);
-    }
+  <!-- Firebase Setup -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAurY86EouYcDbI186c6AqMukWbkEbvP0E",
+      authDomain: "list-barang-semua-bidang.firebaseapp.com",
+      projectId: "list-barang-semua-bidang",
+      storageBucket: "list-barang-semua-bidang.appspot.com",
+      messagingSenderId: "915737150263",
+      appId: "1:915737150263:web:950d3a7de203a6389090b2",
+      measurementId: "G-F8X8JC8WKG"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.db = db;
+    window.doc = doc;
+    window.setDoc = setDoc;
+    window.getDoc = getDoc;
   </script>
 
   <!-- Script utama -->
-  <script type="module" src="script.js" defer></script>
+  <script src="script.js"></script>
 
   <!-- Footer -->
   <div class="copyright-footer">
