@@ -7,6 +7,24 @@ body {
   padding: 20px;
   margin: 0;
   color: #333;
+  transition: background 0.3s, color 0.3s;
+}
+
+body.dark {
+  background: #121212;
+  color: #f0f0f0;
+}
+
+body.dark input,
+body.dark textarea {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+}
+
+body.dark li {
+  background: #1e1e1e;
+  color: #f0f0f0;
 }
 
 button {
@@ -22,7 +40,7 @@ button {
 /* 🔲 NAVBAR & HEADER */
 /* ===================== */
 .navbar {
-  margin-top: 40px;    /* 🔥 Tambahan */
+  margin-top: 40px;
   margin-bottom: 30px;
   text-align: center;
 }
@@ -67,7 +85,6 @@ button {
   width: 300px;
 }
 
-/* Warna tombol aksi berbeda */
 .form-container button:nth-of-type(1) {
   background-color: #4CAF50;
   color: white;
@@ -127,6 +144,11 @@ li {
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: grab;
+  transition: background 0.3s;
+}
+
+li.drag-over {
+  border: 2px dashed #4CAF50;
 }
 
 li span {
@@ -198,6 +220,29 @@ li button:hover {
   ul {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   }
+}
+
+/* =================== */
+/* 🔔 TOAST NOTIFICATION */
+/* =================== */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  background: #333;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 8px;
+  opacity: 0;
+  animation: fadeInOut 3s ease-in-out forwards;
+  z-index: 999;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* 🪪 COPYRIGHT */
