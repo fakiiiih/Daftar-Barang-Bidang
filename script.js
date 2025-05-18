@@ -9,7 +9,7 @@ async function simpanData() {
   if (window.db) {
     const docRef = doc(window.db, "daftarBarang", "dataSemua");
     try {
-      await setDoc(docRef, { semuaData });
+      await setDoc(docRef, { semuaData });  // << ini fix-nya!
       console.log("✅ Data berhasil disimpan ke Firestore.");
     } catch (error) {
       console.error("❌ Gagal simpan ke Firestore:", error);
@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const docRef = doc(window.db, "daftarBarang", "dataSemua");
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        semuaData = docSnap.data();
+        semuaData = docSnap.data().semuaData || semuaData;
         console.log("📥 Data diambil dari Firestore.");
       } else {
         console.log("📭 Tidak ada data Firestore, pakai localStorage.");
