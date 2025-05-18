@@ -1,15 +1,15 @@
+/* style.css */
 /* =================== */
-/* 🌐 RESET & GLOBAL */
+/* 🌐 RESET & GLOBAL   */
 /* =================== */
 body {
   font-family: Arial, sans-serif;
   background: #f7f7f7;
   padding: 20px;
-  margin: 0;
+  margin: 0 auto;
+  max-width: 1200px;
   color: #333;
   transition: background 0.3s, color 0.3s;
-  max-width: 1200px;
-  margin: 0 auto;
 }
 
 body.dark {
@@ -39,7 +39,7 @@ button {
 }
 
 /* ===================== */
-/* 🔲 NAVBAR & HEADER */
+/* 🔲 NAVBAR & HEADER    */
 /* ===================== */
 .navbar {
   margin-top: 40px;
@@ -79,7 +79,7 @@ button {
 }
 
 /* ================= */
-/* 🧾 FORM INPUT */
+/* 🧾 FORM INPUT     */
 /* ================= */
 .form-container {
   text-align: center;
@@ -94,20 +94,20 @@ button {
 }
 
 .form-container button:nth-of-type(1) {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 .form-container button:nth-of-type(2) {
-  background-color: #2196F3;
+  background-color: #2196f3;
   color: white;
 }
 .form-container button:nth-of-type(3) {
-  background-color: #FF9800;
+  background-color: #ff9800;
   color: white;
 }
 
 /* =================== */
-/* 🔍 PENCARIAN */
+/* 🔍 PENCARIAN        */
 /* =================== */
 .search-container {
   text-align: center;
@@ -123,7 +123,7 @@ button {
 }
 
 /* =================== */
-/* 📊 STATISTIK */
+/* 📊 STATISTIK        */
 /* =================== */
 .statistik-container {
   text-align: center;
@@ -133,7 +133,7 @@ button {
 }
 
 /* =================== */
-/* 📦 LIST BARANG */
+/* 📦 LIST BARANG      */
 /* =================== */
 ul {
   list-style: none;
@@ -156,7 +156,7 @@ li {
 }
 
 li.drag-over {
-  border: 2px dashed #4CAF50;
+  border: 2px dashed #4caf50;
 }
 
 li span {
@@ -182,7 +182,7 @@ li button:hover {
 }
 
 /* =================== */
-/* 🔺 SUDUT KANAN ATAS */
+/* 🔺 SUDUT KANAN ATAS  */
 /* =================== */
 .header-left {
   position: absolute;
@@ -197,7 +197,7 @@ li button:hover {
 }
 
 /* =================== */
-/* 🗑️ RESET BUTTON */
+/* 🗑️ RESET BUTTON     */
 /* =================== */
 .reset-container {
   position: fixed;
@@ -218,7 +218,7 @@ li button:hover {
 }
 
 /* =================== */
-/* 📱 RESPONSIVE */
+/* 📱 RESPONSIVE       */
 /* =================== */
 @media screen and (max-width: 768px) {
   .form-container .barang,
@@ -284,7 +284,9 @@ li button:hover {
   100% { opacity: 0; }
 }
 
-/* 🪪 COPYRIGHT */
+/* =================== */
+/* 🪪 COPYRIGHT         */
+/* =================== */
 .copyright-footer {
   position: fixed;
   bottom: 5px;
