@@ -9,20 +9,24 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
+  <!-- Sudut kanan atas -->
   <div class="header-right">
     <span class="title-corner">HUT & IGT 2025</span>
   </div>
 
+  <!-- Navigasi halaman -->
   <div class="navbar">
     <button onclick="buatHalamanBaru()">+ Tambah Halaman</button>
     <span id="navButtons"></span>
   </div>
 
+  <!-- Judul & input nama halaman -->
   <div class="header">
     <h1 id="judulHalaman">Bidang Acara</h1>
     <input type="text" id="judulInput" placeholder="Ganti nama bidang..." oninput="gantiJudul()" />
   </div>
 
+  <!-- Form tambah barang -->
   <div class="form-container">
     <input type="text" id="inputBarang" class="barang" placeholder="Masukkan nama barang" />
     <button onclick="tambahBarang()">Tambah</button>
@@ -30,39 +34,48 @@
     <button onclick="simpanSebagaiPDF()">Simpan sebagai PDF</button>
   </div>
 
+  <!-- Pencarian -->
   <div class="search-container">
-  <input type="text" id="searchInput" placeholder="Cari barang..." oninput="cariBarang()" />
+    <input type="text" id="searchInput" placeholder="Cari barang..." oninput="cariBarang()" />
   </div>
-  
+
+  <!-- Statistik -->
+  <div id="statistikBarang" class="statistik-container"></div>
+
+  <!-- Daftar barang -->
   <ul id="listBarang"></ul>
 
+  <!-- Tombol reset -->
   <div class="reset-container">
     <button onclick="resetSemuaData()">Reset Semua Data</button>
   </div>
+
+  <!-- Firebase + Firestore Setup -->
   <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAurY86EouYcDbI186c6AqMukWbkEbvP0E",
-    authDomain: "list-barang-semua-bidang.firebaseapp.com",
-    projectId: "list-barang-semua-bidang",
-    storageBucket: "list-barang-semua-bidang.appspot.com",
-    messagingSenderId: "915737150263",
-    appId: "1:915737150263:web:950d3a7de203a6389090b2",
-    measurementId: "G-F8X8JC8WKG"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyAurY86EouYcDbI186c6AqMukWbkEbvP0E",
+      authDomain: "list-barang-semua-bidang.firebaseapp.com",
+      projectId: "list-barang-semua-bidang",
+      storageBucket: "list-barang-semua-bidang.appspot.com",
+      messagingSenderId: "915737150263",
+      appId: "1:915737150263:web:950d3a7de203a6389090b2",
+      measurementId: "G-F8X8JC8WKG"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  // Ekspor Firestore ke global agar bisa dipakai di script.js
-  window.db = db;
-  window.doc = doc;
-  window.setDoc = setDoc;
-  window.getDoc = getDoc;
+    // Ekspor Firestore ke global agar bisa dipakai di script.js
+    window.db = db;
+    window.doc = doc;
+    window.setDoc = setDoc;
+    window.getDoc = getDoc;
   </script>
 
+  <!-- Script utama -->
   <script src="script.js"></script>
 </body>
 </html>
