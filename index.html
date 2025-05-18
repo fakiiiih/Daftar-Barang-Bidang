@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -5,13 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Aplikasi Daftar Barang</title>
   <link rel="stylesheet" href="style.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 <body>
   <!-- Sudut kanan atas -->
   <div class="header-left">
-    <span class="title-corner">IKMADIKSI | HUT & IGT 2025</span>
+    <span class="title-corner">IKMADIKSI | HUT &amp; IGT 2025</span>
   </div>
 
   <!-- Navigasi dan Dark Mode Toggle -->
@@ -21,15 +20,25 @@
     <span id="navButtons"></span>
   </div>
 
-  <!-- Judul dan input -->
+  <!-- Judul dan input ganti judul halaman -->
   <div class="header">
     <h1 id="judulHalaman">Bidang Acara</h1>
-    <input type="text" id="judulInput" placeholder="Ganti nama bidang..." oninput="gantiJudul()" />
+    <input
+      type="text"
+      id="judulInput"
+      placeholder="Ganti nama bidang..."
+      oninput="gantiJudul()"
+    />
   </div>
 
-  <!-- Form input barang -->
+  <!-- Form input barang & export -->
   <div class="form-container">
-    <input type="text" id="inputBarang" class="barang" placeholder="Masukkan nama barang" />
+    <input
+      type="text"
+      id="inputBarang"
+      class="barang"
+      placeholder="Masukkan nama barang"
+    />
     <button onclick="tambahBarang()">Tambah</button>
     <button onclick="simpanSebagaiJSON()">Simpan sebagai JSON</button>
     <button onclick="simpanSebagaiPDF()">Simpan sebagai PDF</button>
@@ -37,7 +46,12 @@
 
   <!-- Pencarian barang -->
   <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Cari barang..." oninput="cariBarang()" />
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Cari barang..."
+      oninput="cariBarang()"
+    />
   </div>
 
   <!-- Statistik -->
@@ -51,10 +65,15 @@
     <button onclick="resetSemuaData()">Reset Semua Data</button>
   </div>
 
-  <!-- Firebase Setup -->
+  <!-- Firebase Setup (load sekali) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAurY86EouYcDbI186c6AqMukWbkEbvP0E",
@@ -68,7 +87,6 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-
     window.db = db;
     window.doc = doc;
     window.setDoc = setDoc;
