@@ -17,6 +17,22 @@ async function simpanData() {
   }
 }
 
+function tampilkanToast(pesan) {
+  const toast = document.createElement("div");
+  toast.textContent = pesan;
+  toast.style.position = "fixed";
+  toast.style.bottom = "100px";
+  toast.style.right = "20px";
+  toast.style.background = "#333";
+  toast.style.color = "white";
+  toast.style.padding = "10px 15px";
+  toast.style.borderRadius = "8px";
+  toast.style.opacity = "0.9";
+  toast.style.zIndex = "999";
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
 function renderDaftar() {
   const ul = document.getElementById("listBarang");
   ul.innerHTML = "";
@@ -71,7 +87,14 @@ function gantiJudul() {
 
 function buatHalamanBaru() {
   let nama = prompt("Masukkan nama halaman baru:");
-  if (!nama || semuaData[nama]) return;
+
+  // Validasi nama halaman
+  if (!nama || semuaData[nama] || /[^a-zA-Z0-9_ -]/.test(nama)) {
+    alert("❌ Nama halaman tidak valid atau sudah ada.");
+    return;
+  }
+
+  // Tambahkan halaman baru
   semuaData[nama] = { judul: nama, daftar: [] };
   halamanAktif = nama;
   renderNavigasi();
@@ -79,6 +102,8 @@ function buatHalamanBaru() {
   renderDaftar();
   document.getElementById("judulHalaman").textContent = nama;
   document.getElementById("judulInput").value = "";
+
+  tampilkanToast("✅ Halaman baru berhasil dibuat!");
 }
 
 function renderNavigasi() {
