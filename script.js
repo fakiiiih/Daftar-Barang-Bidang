@@ -3,16 +3,22 @@ let semuaData = JSON.parse(localStorage.getItem("semuaData")) || {
   default: { judul: "Bidang Acara", daftar: [] },
 };
 
+function tampilkanToast(pesan) {
+  const toast = document.createElement("div");
+  toast.className = "toast";
+  toast.textContent = pesan;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
 async function simpanData() {
   localStorage.setItem("semuaData", JSON.stringify(semuaData));
-
   if (window.db) {
     const docRef = doc(window.db, "daftarBarang", "dataSemua");
     try {
       await setDoc(docRef, { semuaData });
-      console.log("✅ Data berhasil disimpan ke Firestore.");
-    } catch (error) {
-      console.error("❌ Gagal simpan ke Firestore:", error);
+    } catch (err) {
+      console.error("Gagal simpan ke Firestore:", err);
     }
   }
 }
@@ -24,83 +30,38 @@ async function loadDataDariFirestore() {
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
       semuaData = docSnap.data().semuaData || semuaData;
-      console.log("🔁 Data disinkron dari Firestore.");
       renderNavigasi();
       renderDaftar();
       renderStatistik();
     }
-  } catch (error) {
-    console.error("⚠️ Gagal sync dari Firestore:", error);
+  } catch (err) {
+    console.error("Gagal ambil data dari Firestore:", err);
   }
 }
 
-function tampilkanToast(pesan) {
-  const toast = document.createElement("div");
-  toast.textContent = pesan;
-  toast.style.position = "fixed";
-  toast.style.bottom = "100px";
-  toast.style.right = "20px";
-  toast.style.background = "#333";
-  toast.style.color = "white";
-  toast.style.padding = "10px 15px";
-  toast.style.borderRadius = "8px";
-  toast.style.opacity = "0.9";
-  toast.style.zIndex = "999";
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 3000);
+function renderNavigasi() {
+  const nav = document.getElementById("navButtons");
+  nav.innerHTML = "";
+  Object.keys(semuaData).forEach((key) => {
+    const btn = document.createElement("button");
+    btn.textContent = semuaData[key].judul;
+    btn.onclick = () => {
+      halamanAktif = key;
+      document.getElementById("judulHalaman").textContent = semuaData[key].judul;
+      document.getElementById("judulInput").value = "";
+      renderDaftar();
+      renderStatistik();
+    };
+    nav.appendChild(btn);
+  });
 }
 
 function renderDaftar() {
   const ul = document.getElementById("listBarang");
   ul.innerHTML = "";
-  const daftarBarang = semuaData[halamanAktif]?.daftar || [];
-
-  daftarBarang.forEach((item, index) => {
-    const li = document.createElement("li");
-    li.setAttribute("draggable", "true");
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = item.cek;
-
-    const span = document.createElement("span");
-    span.textContent = item.nama;
-    if (item.cek) span.classList.add("checked");
-
-    checkbox.onchange = () => {
-      item.cek = checkbox.checked;
-      span.classList.toggle("checked", item.cek);
-      simpanData();
-      renderStatistik();
-    };
-
-    const hapusBtn = document.createElement("button");
-    hapusBtn.textContent = "Hapus";
-    hapusBtn.onclick = () => {
-      semuaData[halamanAktif].daftar.splice(index, 1);
-      simpanData();
-      renderDaftar();
-      renderStatistik();
-    };
-
-    li.appendChild(checkbox);
-    li.appendChild(span);
-    li.appendChild(hapusBtn);
-    ul.appendChild(li);
-  });
-}
-
-function cariBarang() {
-  const query = document.getElementById("searchInput").value.toLowerCase();
   const daftar = semuaData[halamanAktif]?.daftar || [];
 
-  const hasilFilter = daftar
-    .map((item, i) => ({ item, index: i }))
-    .filter(({ item }) => item.nama.toLowerCase().includes(query));
-
-  const ul = document.getElementById("listBarang");
-  ul.innerHTML = "";
-  hasilFilter.forEach(({ item, index }) => {
+  daftar.forEach((item, index) => {
     const li = document.createElement("li");
     li.setAttribute("draggable", "true");
 
@@ -109,7 +70,7 @@ function cariBarang() {
     checkbox.checked = item.cek;
 
     const span = document.createElement("span");
-    span.textContent = item.nama;
+    span.textContent = "📦 " + item.nama;
     if (item.cek) span.classList.add("checked");
 
     checkbox.onchange = () => {
@@ -119,17 +80,41 @@ function cariBarang() {
       renderStatistik();
     };
 
+    const editBtn = document.createElement("button");
+    editBtn.textContent = "✏️";
+    editBtn.onclick = () => {
+      const inputEdit = document.createElement("input");
+      inputEdit.type = "text";
+      inputEdit.value = item.nama;
+      inputEdit.onkeydown = (e) => {
+        if (e.key === "Enter") {
+          item.nama = inputEdit.value.trim();
+          simpanData();
+          renderDaftar();
+          renderStatistik();
+        }
+      };
+      li.innerHTML = "";
+      li.appendChild(checkbox);
+      li.appendChild(inputEdit);
+      li.appendChild(hapusBtn);
+    };
+
     const hapusBtn = document.createElement("button");
     hapusBtn.textContent = "Hapus";
     hapusBtn.onclick = () => {
-      semuaData[halamanAktif].daftar.splice(index, 1);
-      simpanData();
-      renderDaftar();
-      renderStatistik();
+      const konfirmasi = confirm("Yakin ingin menghapus barang ini?");
+      if (konfirmasi) {
+        semuaData[halamanAktif].daftar.splice(index, 1);
+        simpanData();
+        renderDaftar();
+        renderStatistik();
+      }
     };
 
     li.appendChild(checkbox);
     li.appendChild(span);
+    li.appendChild(editBtn);
     li.appendChild(hapusBtn);
     ul.appendChild(li);
   });
@@ -145,64 +130,92 @@ function renderStatistik() {
 }
 
 function tambahBarang() {
-  const nama = document.getElementById("inputBarang").value.trim();
+  const input = document.getElementById("inputBarang");
+  const nama = input.value.trim();
   if (!nama) return;
 
-  if (!semuaData[halamanAktif]) {
-    semuaData[halamanAktif] = { judul: halamanAktif, daftar: [] };
-  }
-
   semuaData[halamanAktif].daftar.push({ nama, cek: false });
-  document.getElementById("inputBarang").value = "";
-  document.getElementById("inputBarang").focus();
+  input.value = "";
+  input.focus();
   simpanData();
   renderDaftar();
   renderStatistik();
 }
 
 function gantiJudul() {
-  const judul = document.getElementById("judulInput").value.trim();
+  const input = document.getElementById("judulInput");
+  const judul = input.value.trim();
   if (!judul) return;
-  document.getElementById("judulHalaman").textContent = judul;
+
   semuaData[halamanAktif].judul = judul;
+  document.getElementById("judulHalaman").textContent = judul;
   simpanData();
+  renderNavigasi();
 }
 
 function buatHalamanBaru() {
-  let nama = prompt("Masukkan nama halaman baru:");
-  if (!nama || semuaData[nama] || /[^a-zA-Z0-9_ -]/.test(nama)) {
-    alert("❌ Nama halaman tidak valid atau sudah ada.");
+  const nama = prompt("Masukkan nama halaman:");
+  if (!nama || semuaData[nama]) {
+    alert("Nama tidak valid atau sudah digunakan.");
     return;
   }
-
   semuaData[nama] = { judul: nama, daftar: [] };
   halamanAktif = nama;
   renderNavigasi();
-  document.getElementById("judulInput").value = semuaData[nama].judul;
-  simpanData();
   renderDaftar();
   renderStatistik();
   document.getElementById("judulHalaman").textContent = nama;
   document.getElementById("judulInput").value = "";
-
+  simpanData();
   tampilkanToast("✅ Halaman baru berhasil dibuat!");
 }
 
-function renderNavigasi() {
-  const navButtons = document.getElementById("navButtons");
-  navButtons.innerHTML = '';
-  Object.keys(semuaData).forEach((hal) => {
-    const button = document.createElement("button");
-    button.textContent = semuaData[hal].judul;
-    button.onclick = () => {
-      halamanAktif = hal;
-      document.getElementById("judulHalaman").textContent = semuaData[hal].judul;
-      document.getElementById("judulInput").value = "";
-      renderDaftar();
-      renderStatistik();
-    };
-    navButtons.appendChild(button);
-  });
+function cariBarang() {
+  const query = document.getElementById("searchInput").value.toLowerCase();
+  const ul = document.getElementById("listBarang");
+  const daftar = semuaData[halamanAktif]?.daftar || [];
+
+  ul.innerHTML = "";
+
+  daftar
+    .map((item, i) => ({ item, index: i }))
+    .filter(({ item }) => item.nama.toLowerCase().includes(query))
+    .forEach(({ item, index }) => {
+      const li = document.createElement("li");
+      li.setAttribute("draggable", "true");
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = item.cek;
+
+      const span = document.createElement("span");
+      span.textContent = "📦 " + item.nama;
+      if (item.cek) span.classList.add("checked");
+
+      checkbox.onchange = () => {
+        item.cek = checkbox.checked;
+        span.classList.toggle("checked", item.cek);
+        simpanData();
+        renderStatistik();
+      };
+
+      const hapusBtn = document.createElement("button");
+      hapusBtn.textContent = "Hapus";
+      hapusBtn.onclick = () => {
+        const konfirmasi = confirm("Yakin ingin menghapus barang ini?");
+        if (konfirmasi) {
+          semuaData[halamanAktif].daftar.splice(index, 1);
+          simpanData();
+          renderDaftar();
+          renderStatistik();
+        }
+      };
+
+      li.appendChild(checkbox);
+      li.appendChild(span);
+      li.appendChild(hapusBtn);
+      ul.appendChild(li);
+    });
 }
 
 function simpanSebagaiJSON() {
@@ -216,80 +229,66 @@ function simpanSebagaiJSON() {
 
 function simpanSebagaiPDF() {
   const elemen = document.body;
-  html2canvas(elemen).then(canvas => {
-    const imgData = canvas.toDataURL('image/png');
-    const pdf = new jspdf.jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4'
-    });
-
+  html2canvas(elemen).then((canvas) => {
+    const imgData = canvas.toDataURL("image/png");
+    const pdf = new jspdf.jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
     const pageWidth = pdf.internal.pageSize.getWidth();
     const imgHeight = canvas.height * pageWidth / canvas.width;
-
-    pdf.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight);
+    pdf.addImage(imgData, "PNG", 0, 0, pageWidth, imgHeight);
     pdf.save("agenda_hut_igt_2025.pdf");
   });
 }
 
 function resetSemuaData() {
   const konfirmasi = confirm("Apakah kamu yakin ingin menghapus semua data?");
-  if (konfirmasi) {
-    semuaData = {
-      default: { judul: "Bidang Acara", daftar: [] }
-    };
-    halamanAktif = "default";
-    simpanData();
-    renderNavigasi();
-    renderDaftar();
-    renderStatistik();
-    document.getElementById("judulHalaman").textContent = "Bidang Acara";
-    document.getElementById("judulInput").value = "";
-  }
+  if (!konfirmasi) return;
+
+  semuaData = {
+    default: { judul: "Bidang Acara", daftar: [] },
+  };
+  halamanAktif = "default";
+  simpanData();
+  renderNavigasi();
+  renderDaftar();
+  renderStatistik();
+  document.getElementById("judulHalaman").textContent = "Bidang Acara";
+  document.getElementById("judulInput").value = "";
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  if (window.db) {
-    try {
-      const docRef = doc(window.db, "daftarBarang", "dataSemua");
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        semuaData = docSnap.data().semuaData || semuaData;
-        simpanData();
-        console.log("📥 Data diambil dari Firestore.");
-      } else {
-        console.log("📭 Tidak ada data Firestore, pakai localStorage.");
-      }
-    } catch (error) {
-      console.error("⚠️ Gagal ambil data dari Firestore:", error);
-    }
-  }
-
+  await loadDataDariFirestore();
   renderNavigasi();
   renderDaftar();
   renderStatistik();
 
-  const resetBtn = document.createElement("button");
-  resetBtn.textContent = "Reset Semua Data";
-  resetBtn.style.position = "fixed";
-  resetBtn.style.bottom = "20px";
-  resetBtn.style.right = "20px";
-  resetBtn.style.backgroundColor = "#ff3333";
-  resetBtn.style.color = "white";
-  resetBtn.style.border = "none";
-  resetBtn.style.borderRadius = "5px";
-  resetBtn.style.padding = "10px 15px";
-  resetBtn.style.cursor = "pointer";
-  resetBtn.onclick = resetSemuaData;
-  document.body.appendChild(resetBtn);
+  // Dark mode toggle
+  const toggleBtn = document.getElementById("darkModeToggle");
+  toggleBtn.onclick = () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("tema", document.body.classList.contains("dark") ? "dark" : "light");
+  };
 
-  // Drag-and-drop event
+  if (localStorage.getItem("tema") === "dark") {
+    document.body.classList.add("dark");
+  }
+
+  // Drag and drop
   const ul = document.getElementById("listBarang");
+
   ul.addEventListener("dragstart", (e) => {
     e.dataTransfer.setData("index", [...ul.children].indexOf(e.target));
   });
 
-  ul.addEventListener("dragover", (e) => e.preventDefault());
+  ul.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    const target = e.target.closest("li");
+    if (target) target.classList.add("drag-over");
+  });
+
+  ul.addEventListener("dragleave", (e) => {
+    const target = e.target.closest("li");
+    if (target) target.classList.remove("drag-over");
+  });
 
   ul.addEventListener("drop", (e) => {
     const draggedIndex = e.dataTransfer.getData("index");
@@ -300,16 +299,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     simpanData();
     renderDaftar();
     renderStatistik();
+    e.target.closest("li")?.classList.remove("drag-over");
   });
 });
 
-// 🔁 Auto-sync tiap 10 detik
-setInterval(() => {
-  console.log("📡 Mengambil data dari Firestore...");
-  loadDataDariFirestore();
-}, 10000);
-
-setInterval(() => {
-  console.log("⏳ Menyimpan data otomatis ke Firestore...");
-  simpanData();
-}, 10000);
+// Sync otomatis
+setInterval(loadDataDariFirestore, 10000);
+setInterval(simpanData, 10000);
