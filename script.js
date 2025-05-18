@@ -43,15 +43,16 @@ function renderDaftar() {
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.checked = item.cek;
+    
+    const span = document.createElement("span");
+    span.textContent = item.nama;
+    if (item.cek) span.classList.add("checked");
+    
     checkbox.onchange = () => {
       item.cek = checkbox.checked;
       span.classList.toggle("checked", item.cek);
       simpanData();
     };
-
-    const span = document.createElement("span");
-    span.textContent = item.nama;
-    if (item.cek) span.classList.add("checked");
 
     const hapusBtn = document.createElement("button");
     hapusBtn.textContent = "Hapus";
@@ -70,10 +71,14 @@ function renderDaftar() {
 
 function tambahBarang() {
   const nama = document.getElementById("inputBarang").value.trim();
+  if (!nama) return; // validasi biar gak masukin string kosong
+
   if (!semuaData[halamanAktif]) {
     semuaData[halamanAktif] = { judul: halamanAktif, daftar: [] };
   }
-  document.getElementById("inputBarang").value = ""; // ← clear input
+  
+  semuaData[halamanAktif].daftar.push({ nama, cek: false }); // ini yang kurang
+  document.getElementById("inputBarang").value = "";
   document.getElementById("inputBarang").focus();
   simpanData();
   renderDaftar();
