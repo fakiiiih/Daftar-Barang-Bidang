@@ -77,6 +77,45 @@ function renderDaftar() {
       simpanData();
       renderDaftar();
     };
+function cariBarang() {
+  const query = document.getElementById("searchInput").value.toLowerCase();
+  const daftar = semuaData[halamanAktif]?.daftar || [];
+
+  const hasilFilter = daftar.filter(item => item.nama.toLowerCase().includes(query));
+  
+  const ul = document.getElementById("listBarang");
+  ul.innerHTML = "";
+  hasilFilter.forEach((item, index) => {
+    const li = document.createElement("li");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = item.cek;
+
+    const span = document.createElement("span");
+    span.textContent = item.nama;
+    if (item.cek) span.classList.add("checked");
+
+    checkbox.onchange = () => {
+      item.cek = checkbox.checked;
+      span.classList.toggle("checked", item.cek);
+      simpanData();
+    };
+
+    const hapusBtn = document.createElement("button");
+    hapusBtn.textContent = "Hapus";
+    hapusBtn.onclick = () => {
+      semuaData[halamanAktif].daftar.splice(index, 1);
+      simpanData();
+      renderDaftar();
+    };
+
+    li.appendChild(checkbox);
+    li.appendChild(span);
+    li.appendChild(hapusBtn);
+    ul.appendChild(li);
+  });
+}
 
     li.appendChild(checkbox);
     li.appendChild(span);
