@@ -27,6 +27,7 @@ async function loadDataDariFirestore() {
       console.log("🔁 Data disinkron dari Firestore.");
       renderNavigasi();
       renderDaftar();
+      renderStatistik();
     }
   } catch (error) {
     console.error("⚠️ Gagal sync dari Firestore:", error);
@@ -53,8 +54,10 @@ function renderDaftar() {
   const ul = document.getElementById("listBarang");
   ul.innerHTML = "";
   const daftarBarang = semuaData[halamanAktif]?.daftar || [];
+
   daftarBarang.forEach((item, index) => {
     const li = document.createElement("li");
+    li.setAttribute("draggable", "true");
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
@@ -68,6 +71,7 @@ function renderDaftar() {
       item.cek = checkbox.checked;
       span.classList.toggle("checked", item.cek);
       simpanData();
+      renderStatistik();
     };
 
     const hapusBtn = document.createElement("button");
@@ -76,38 +80,7 @@ function renderDaftar() {
       semuaData[halamanAktif].daftar.splice(index, 1);
       simpanData();
       renderDaftar();
-    };
-function cariBarang() {
-  const query = document.getElementById("searchInput").value.toLowerCase();
-  const daftar = semuaData[halamanAktif]?.daftar || [];
-
-  const hasilFilter = daftar.filter(item => item.nama.toLowerCase().includes(query));
-  
-  const ul = document.getElementById("listBarang");
-  ul.innerHTML = "";
-  hasilFilter.forEach((item, index) => {
-    const li = document.createElement("li");
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = item.cek;
-
-    const span = document.createElement("span");
-    span.textContent = item.nama;
-    if (item.cek) span.classList.add("checked");
-
-    checkbox.onchange = () => {
-      item.cek = checkbox.checked;
-      span.classList.toggle("checked", item.cek);
-      simpanData();
-    };
-
-    const hapusBtn = document.createElement("button");
-    hapusBtn.textContent = "Hapus";
-    hapusBtn.onclick = () => {
-      semuaData[halamanAktif].daftar.splice(index, 1);
-      simpanData();
-      renderDaftar();
+      renderStatistik();
     };
 
     li.appendChild(checkbox);
@@ -117,11 +90,58 @@ function cariBarang() {
   });
 }
 
+function cariBarang() {
+  const query = document.getElementById("searchInput").value.toLowerCase();
+  const daftar = semuaData[halamanAktif]?.daftar || [];
+
+  const hasilFilter = daftar
+    .map((item, i) => ({ item, index: i }))
+    .filter(({ item }) => item.nama.toLowerCase().includes(query));
+
+  const ul = document.getElementById("listBarang");
+  ul.innerHTML = "";
+  hasilFilter.forEach(({ item, index }) => {
+    const li = document.createElement("li");
+    li.setAttribute("draggable", "true");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = item.cek;
+
+    const span = document.createElement("span");
+    span.textContent = item.nama;
+    if (item.cek) span.classList.add("checked");
+
+    checkbox.onchange = () => {
+      item.cek = checkbox.checked;
+      span.classList.toggle("checked", item.cek);
+      simpanData();
+      renderStatistik();
+    };
+
+    const hapusBtn = document.createElement("button");
+    hapusBtn.textContent = "Hapus";
+    hapusBtn.onclick = () => {
+      semuaData[halamanAktif].daftar.splice(index, 1);
+      simpanData();
+      renderDaftar();
+      renderStatistik();
+    };
+
     li.appendChild(checkbox);
     li.appendChild(span);
     li.appendChild(hapusBtn);
     ul.appendChild(li);
   });
+}
+
+function renderStatistik() {
+  const daftar = semuaData[halamanAktif]?.daftar || [];
+  const total = daftar.length;
+  const selesai = daftar.filter(b => b.cek).length;
+  document.getElementById("statistikBarang").innerHTML = `
+    <p>Total barang: <b>${total}</b> | Sudah diceklis: <b>${selesai}</b></p>
+  `;
 }
 
 function tambahBarang() {
@@ -137,6 +157,7 @@ function tambahBarang() {
   document.getElementById("inputBarang").focus();
   simpanData();
   renderDaftar();
+  renderStatistik();
 }
 
 function gantiJudul() {
@@ -160,6 +181,7 @@ function buatHalamanBaru() {
   document.getElementById("judulInput").value = semuaData[nama].judul;
   simpanData();
   renderDaftar();
+  renderStatistik();
   document.getElementById("judulHalaman").textContent = nama;
   document.getElementById("judulInput").value = "";
 
@@ -177,6 +199,7 @@ function renderNavigasi() {
       document.getElementById("judulHalaman").textContent = semuaData[hal].judul;
       document.getElementById("judulInput").value = "";
       renderDaftar();
+      renderStatistik();
     };
     navButtons.appendChild(button);
   });
@@ -219,6 +242,7 @@ function resetSemuaData() {
     simpanData();
     renderNavigasi();
     renderDaftar();
+    renderStatistik();
     document.getElementById("judulHalaman").textContent = "Bidang Acara";
     document.getElementById("judulInput").value = "";
   }
@@ -243,6 +267,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   renderNavigasi();
   renderDaftar();
+  renderStatistik();
 
   const resetBtn = document.createElement("button");
   resetBtn.textContent = "Reset Semua Data";
@@ -257,9 +282,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   resetBtn.style.cursor = "pointer";
   resetBtn.onclick = resetSemuaData;
   document.body.appendChild(resetBtn);
+
+  // Drag-and-drop event
+  const ul = document.getElementById("listBarang");
+  ul.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("index", [...ul.children].indexOf(e.target));
+  });
+
+  ul.addEventListener("dragover", (e) => e.preventDefault());
+
+  ul.addEventListener("drop", (e) => {
+    const draggedIndex = e.dataTransfer.getData("index");
+    const droppedIndex = [...ul.children].indexOf(e.target.closest("li"));
+    const daftar = semuaData[halamanAktif].daftar;
+    const [draggedItem] = daftar.splice(draggedIndex, 1);
+    daftar.splice(droppedIndex, 0, draggedItem);
+    simpanData();
+    renderDaftar();
+    renderStatistik();
+  });
 });
 
-// 🔁 Auto-sync
+// 🔁 Auto-sync tiap 10 detik
 setInterval(() => {
   console.log("📡 Mengambil data dari Firestore...");
   loadDataDariFirestore();
