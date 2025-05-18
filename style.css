@@ -22,6 +22,7 @@ button {
 /* 🔲 NAVBAR & HEADER */
 /* ===================== */
 .navbar {
+  margin-top: 40px;    /* 🔥 Tambahan */
   margin-bottom: 30px;
   text-align: center;
 }
