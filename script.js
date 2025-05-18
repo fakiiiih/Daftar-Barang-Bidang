@@ -1,3 +1,4 @@
+// ✅ Inisialisasi variabel
 let halamanAktif = "default";
 let semuaData = JSON.parse(localStorage.getItem("semuaData")) || {
   default: { judul: "Bidang Acara", daftar: [] },
@@ -88,7 +89,12 @@ function renderDaftar() {
       inputEdit.value = item.nama;
       inputEdit.onkeydown = (e) => {
         if (e.key === "Enter") {
-          item.nama = inputEdit.value.trim();
+          const namaBaru = inputEdit.value.trim();
+          if (namaBaru === "") {
+            tampilkanToast("Nama barang tidak boleh kosong");
+            return;
+          }
+          item.nama = namaBaru;
           simpanData();
           renderDaftar();
           renderStatistik();
@@ -132,7 +138,10 @@ function renderStatistik() {
 function tambahBarang() {
   const input = document.getElementById("inputBarang");
   const nama = input.value.trim();
-  if (!nama) return;
+  if (!nama) {
+    tampilkanToast("Nama barang tidak boleh kosong");
+    return;
+  }
 
   semuaData[halamanAktif].daftar.push({ nama, cek: false });
   input.value = "";
@@ -253,6 +262,7 @@ function resetSemuaData() {
   renderStatistik();
   document.getElementById("judulHalaman").textContent = "Bidang Acara";
   document.getElementById("judulInput").value = "";
+  renderStatistik();
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -261,7 +271,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderDaftar();
   renderStatistik();
 
-  // Dark mode toggle
   const toggleBtn = document.getElementById("darkModeToggle");
   toggleBtn.onclick = () => {
     document.body.classList.toggle("dark");
@@ -272,11 +281,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.body.classList.add("dark");
   }
 
-  // Drag and drop
   const ul = document.getElementById("listBarang");
+  let draggedItemIndex;
 
   ul.addEventListener("dragstart", (e) => {
-    e.dataTransfer.setData("index", [...ul.children].indexOf(e.target));
+    draggedItemIndex = [...ul.children].indexOf(e.target);
+    e.dataTransfer.effectAllowed = "move";
   });
 
   ul.addEventListener("dragover", (e) => {
@@ -291,18 +301,28 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
 
   ul.addEventListener("drop", (e) => {
-    const draggedIndex = e.dataTransfer.getData("index");
-    const droppedIndex = [...ul.children].indexOf(e.target.closest("li"));
+    e.preventDefault();
+    const target = e.target.closest("li");
+    if (!target) return;
+    const droppedIndex = [...ul.children].indexOf(target);
     const daftar = semuaData[halamanAktif].daftar;
-    const [draggedItem] = daftar.splice(draggedIndex, 1);
+    const [draggedItem] = daftar.splice(draggedItemIndex, 1);
     daftar.splice(droppedIndex, 0, draggedItem);
     simpanData();
     renderDaftar();
     renderStatistik();
-    e.target.closest("li")?.classList.remove("drag-over");
+    target.classList.remove("drag-over");
   });
 });
 
-// Sync otomatis
+// Auto sync
 setInterval(loadDataDariFirestore, 10000);
 setInterval(simpanData, 10000);
+
+// Reminder Notifikasi (dummy contoh, bisa dikembangkan)
+setInterval(() => {
+  const now = new Date();
+  if (now.getMinutes() % 2 === 0) {
+    tampilkanToast("⏰ Jangan lupa cek barangmu sekarang!");
+  }
+}, 60000);
