@@ -73,6 +73,7 @@ function tambahBarang() {
   if (!semuaData[halamanAktif]) {
     semuaData[halamanAktif] = { judul: halamanAktif, daftar: [] };
   }
+  document.getElementById("inputBarang").value = ""; // ← clear input
   document.getElementById("inputBarang").focus();
   simpanData();
   renderDaftar();
@@ -99,7 +100,7 @@ function buatHalamanBaru() {
   semuaData[nama] = { judul: nama, daftar: [] };
   halamanAktif = nama;
   renderNavigasi();
-  document.getElementById("judulInput").value = semuaData[hal].judul;
+  document.getElementById("judulInput").value = semuaData[nama].judul;
   simpanData();
   renderDaftar();
   document.getElementById("judulHalaman").textContent = nama;
