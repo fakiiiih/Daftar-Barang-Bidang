@@ -14,19 +14,20 @@
     <span class="title-corner">IKMADIKSI | HUT & IGT 2025</span>
   </div>
 
-  <!-- Navigasi halaman -->
+  <!-- Navigasi dan Dark Mode Toggle -->
   <div class="navbar">
     <button onclick="buatHalamanBaru()">+ Tambah Halaman</button>
+    <button id="darkModeToggle">🌙/☀️</button>
     <span id="navButtons"></span>
   </div>
 
-  <!-- Judul & input nama halaman -->
+  <!-- Judul dan input -->
   <div class="header">
     <h1 id="judulHalaman">Bidang Acara</h1>
     <input type="text" id="judulInput" placeholder="Ganti nama bidang..." oninput="gantiJudul()" />
   </div>
 
-  <!-- Form tambah barang -->
+  <!-- Form input barang -->
   <div class="form-container">
     <input type="text" id="inputBarang" class="barang" placeholder="Masukkan nama barang" />
     <button onclick="tambahBarang()">Tambah</button>
@@ -34,7 +35,7 @@
     <button onclick="simpanSebagaiPDF()">Simpan sebagai PDF</button>
   </div>
 
-  <!-- Pencarian -->
+  <!-- Pencarian barang -->
   <div class="search-container">
     <input type="text" id="searchInput" placeholder="Cari barang..." oninput="cariBarang()" />
   </div>
@@ -50,7 +51,7 @@
     <button onclick="resetSemuaData()">Reset Semua Data</button>
   </div>
 
-  <!-- Firebase + Firestore Setup -->
+  <!-- Firebase Setup -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -68,7 +69,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Ekspor Firestore ke global agar bisa dipakai di script.js
     window.db = db;
     window.doc = doc;
     window.setDoc = setDoc;
@@ -78,9 +78,9 @@
   <!-- Script utama -->
   <script src="script.js"></script>
 
+  <!-- Footer -->
   <div class="copyright-footer">
-  &copy; Copyright | Bidang Perlengkapan
+    &copy; Copyright | Bidang Perlengkapan
   </div>
-
 </body>
 </html>
