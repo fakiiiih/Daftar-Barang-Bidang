@@ -1,12 +1,29 @@
+/* =================== */
+/* 🌐 RESET & GLOBAL */
+/* =================== */
 body {
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #f7f7f7;
   padding: 20px;
   margin: 0;
+  color: #333;
 }
 
+button {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ===================== */
+/* 🔲 NAVBAR & HEADER */
+/* ===================== */
 .navbar {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  text-align: center;
 }
 
 .navbar button {
@@ -14,24 +31,32 @@ body {
   padding: 10px 15px;
   background-color: #333;
   color: white;
-  border: none;
   border-radius: 5px;
-  cursor: pointer;
 }
 
 .navbar button:hover {
   background-color: #555;
 }
 
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin-bottom: 10px;
+}
+
 .header input[type="text"] {
   padding: 8px;
   font-size: 16px;
-  margin-top: 10px;
   width: 60%;
 }
 
-.form-container,
-.header {
+/* ================= */
+/* 🧾 FORM INPUT */
+/* ================= */
+.form-container {
   text-align: center;
   margin-bottom: 20px;
 }
@@ -41,82 +66,23 @@ body {
   width: 300px;
 }
 
-button {
-  padding: 10px;
-  margin: 5px;
-  border-radius: 5px;
-  cursor: pointer;
+/* Warna tombol aksi berbeda */
+.form-container button:nth-of-type(1) {
+  background-color: #4CAF50;
+  color: white;
 }
-
-ul {
-  list-style: none;
-  padding: 0;
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
+.form-container button:nth-of-type(2) {
+  background-color: #2196F3;
+  color: white;
 }
-
-li {
-  background: #fff;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-li span {
-  flex: 1;
-  margin-left: 10px;
-}
-
-.checked {
-  text-decoration: line-through;
-  color: green;
-}
-
-li button {
-  background: crimson;
+.form-container button:nth-of-type(3) {
+  background-color: #FF9800;
   color: white;
 }
 
-li button:hover {
-  background: darkred;
-}
-
-.header-right {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
-  color: #333;
-}
-
-.title-corner {
-  font-weight: bold;
-}
-
-.reset-container {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-}
-
-.reset-container button {
-  background-color: red;
-  color: white;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.reset-container button:hover {
-  background-color: darkred;
-}
-
+/* =================== */
+/* 🔍 PENCARIAN */
+/* =================== */
 .search-container {
   text-align: center;
   margin-bottom: 20px;
@@ -130,11 +96,105 @@ li button:hover {
   border: 1px solid #ccc;
 }
 
-.header h1 {
-  margin-bottom: 10px;
+/* =================== */
+/* 📊 STATISTIK */
+/* =================== */
+.statistik-container {
+  text-align: center;
+  margin-bottom: 15px;
+  font-weight: bold;
+  color: #444;
 }
 
-/* Tambahkan jarak antara navbar dan header */
-.navbar {
-  margin-bottom: 30px;
+/* =================== */
+/* 📦 LIST BARANG */
+/* =================== */
+ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+}
+
+li {
+  background: #fff;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+}
+
+li span {
+  flex: 1;
+  margin-left: 10px;
+}
+
+li button {
+  background: crimson;
+  color: white;
+}
+
+li button:hover {
+  background: darkred;
+}
+
+.checked {
+  text-decoration: line-through;
+  color: green;
+}
+
+/* =================== */
+/* 🔺 SUDUT KANAN ATAS */
+/* =================== */
+.header-right {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  color: #333;
+}
+
+.title-corner {
+  font-weight: bold;
+}
+
+/* =================== */
+/* 🗑️ RESET BUTTON */
+/* =================== */
+.reset-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
+
+.reset-container button {
+  background-color: red;
+  color: white;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.reset-container button:hover {
+  background-color: darkred;
+}
+
+/* =================== */
+/* 📱 RESPONSIVE */
+/* =================== */
+@media screen and (max-width: 600px) {
+  .form-container,
+  .search-container,
+  .header input[type="text"],
+  .search-container input {
+    width: 90%;
+  }
+
+  ul {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
 }
