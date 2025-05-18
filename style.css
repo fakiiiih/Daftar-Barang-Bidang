@@ -116,3 +116,25 @@ li button:hover {
 .reset-container button:hover {
   background-color: darkred;
 }
+
+.search-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-container input {
+  width: 60%;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.header h1 {
+  margin-bottom: 10px;
+}
+
+/* Tambahkan jarak antara navbar dan header */
+.navbar {
+  margin-bottom: 30px;
+}
